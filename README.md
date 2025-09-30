@@ -44,7 +44,6 @@ ylabel('Magnitude ');
 title(' Frequency Response of Chebyshev IIR LPF');
 
 
-
 ## PROGRAM (HPF): 
 clc;
 close;
@@ -55,32 +54,28 @@ alphap = input('Enter the pass band attenuation (dB)= ');
 alphas = input('Enter the stop band attenuation (dB)= ');
 T = input('Enter the Value of sampling Time= ');
 
-// ============================
 // Pre-warping (Bilinear Transformation)
-// ============================
+
 omegap = (2/T)*tan(wp/2);   // Passband edge (analog)
 disp(omegap,'omegap=');
 omegas = (2/T)*tan(ws/2);   // Stopband edge (analog)
 disp(omegas,'omegas=');
 
-// ============================
+
 // Order of the HPF
-// ============================
+
 // For HPF: use acosh(omegap/omegas)
 N = acosh(sqrt(((10^(0.1*alphas))-1)/((10^(0.1*alphap))-1))) / acosh(omegap/omegas);
 disp(N,'N=');
 N = ceil(N);
 disp(N,'Round off value of N=');
 
-// ============================
 // Cutoff frequency
-// ============================
 omegac = omegap / (((10^(0.1*alphap))-1)^(1/(2*N)));
 disp(omegac,'omegac=');
 
-// ============================
+
 // Chebyshev Prototype (Normalized LPF)
-// ============================
 Epsilon = sqrt((10^(0.1*alphap))-1);
 disp(Epsilon,'Epsilon=');
 
@@ -92,22 +87,19 @@ s = poly(0,'s');   // Laplace variable
 hs = poly(gn,'s','coeff') / real(poly(pols,'s'));
 disp(hs,'Analog Normalized Chebyshev LPF');
 
-// ============================
+
 // LPF → HPF Transformation (s -> omegac/s)
-// ============================
 sh = horner(hs, omegac/s);
 disp(sh,'Analog Chebyshev High-Pass Filter');
 
-// ============================
+
 // Bilinear Transformation: s -> (2/T)*((z-1)/(z+1))
-// ============================
 z = poly(0,'z');   // z-domain variable
 Hz = horner(sh, (2/T) * ((z-1)/(z+1)));
 disp(Hz,'Digital HPF Transfer function H(Z)=');
 
-// ============================
+
 // Frequency Response
-// ============================
 HW = frmag(Hz, 512);
 w = 0:%pi/511:%pi;
 
@@ -115,7 +107,6 @@ plot(w/%pi, abs(HW));
 xlabel('Normalized Digital Frequency ×π rad/sample');
 ylabel('Magnitude');
 title('Frequency Response of Chebyshev IIR High-Pass Filter');
-
 
 ## OUTPUT (LPF) : 
 <img width="1919" height="1199" alt="image" src="https://github.com/user-attachments/assets/c6416fe0-5384-4fd7-8fad-67b7ba9cd592" />
